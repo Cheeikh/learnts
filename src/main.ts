@@ -5,9 +5,21 @@ import * as readline from "readline-sync";
 // Classe principale de l'application
 class Application {
     private service: CabinetService;
+    private actionHandlers: Map<number, () => void>;
     
     constructor() {
         this.service = new CabinetService();
+        
+        // Initialiser les gestionnaires d'actions avec une Map
+        this.actionHandlers = new Map([
+            [1, () => this.ajouterPatient()],
+            [2, () => this.ajouterMedecin()],
+            [3, () => this.ajouterRendezVous()],
+            [4, () => ConsoleUI.afficherPatients(this.service, () => this.afficherMenu())],
+            [5, () => ConsoleUI.afficherMedecins(this.service, () => this.afficherMenu())],
+            [6, () => ConsoleUI.afficherRendezVous(this.service, () => this.afficherMenu())],
+            [7, () => ConsoleUI.quitter(this.service)]
+        ]);
     }
     
     // Démarrer l'application
@@ -18,37 +30,19 @@ class Application {
     
     // Fonction principale pour afficher le menu et traiter les choix
     private afficherMenu(): void {
-        const choix = ConsoleUI.afficherMenu();
+        const choix = ConsoleUI.afficherMenu(this.service);
         this.traiterChoix(choix);
     }
     
     // Fonction pour traiter le choix de l'utilisateur
     private traiterChoix(choix: number): void {
-        switch (choix) {
-            case 1: // Ajouter un patient
-                this.ajouterPatient();
-                break;
-            case 2: // Ajouter un médecin
-                this.ajouterMedecin();
-                break;
-            case 3: // Ajouter un rendez-vous
-                this.ajouterRendezVous();
-                break;
-            case 4: // Afficher les patients
-                ConsoleUI.afficherPatients(this.service, () => this.afficherMenu());
-                break;
-            case 5: // Afficher les médecins
-                ConsoleUI.afficherMedecins(this.service, () => this.afficherMenu());
-                break;
-            case 6: // Afficher les rendez-vous
-                ConsoleUI.afficherRendezVous(this.service, () => this.afficherMenu());
-                break;
-            case 7: // Quitter
-                ConsoleUI.quitter();
-                break;
-            default:
-                this.gererChoixInvalide();
-                break;
+        // Utiliser la Map pour exécuter l'action correspondante au choix
+        const action = this.actionHandlers.get(choix);
+        
+        if (action) {
+            action();
+        } else {
+            this.gererChoixInvalide();
         }
     }
     

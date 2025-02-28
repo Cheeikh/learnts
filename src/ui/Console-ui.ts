@@ -5,7 +5,7 @@ import { RendezVous } from "../model/RendezVous.js";
 import { CabinetService } from "../services/CabinetService.js";
 
 // Fonction pour afficher le menu principal
-export const afficherMenu = () => {
+export const afficherMenu = (service: CabinetService) => {
     console.clear(); // Nettoie la console pour une meilleure lisibilité
     console.log("=== MENU PRINCIPAL ===");
     console.log("1. Ajouter un patient");
@@ -66,13 +66,12 @@ export const afficherRendezVous = (service: CabinetService, retourMenu: () => vo
             if (a.date.getTime() !== b.date.getTime()) {
                 return a.date.getTime() - b.date.getTime();
             }
-            return a.heure.getTime() - b.heure.getTime();
+            return a.heure.localeCompare(b.heure);
         });
 
         rendezVousTries.forEach(rdv => {
             const dateFormatee = rdv.date.toLocaleDateString('fr-FR');
-            const heureFormatee = rdv.heure.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-            console.log(`Patient: ${rdv.patient.nom} ${rdv.patient.prenom} | Médecin: ${rdv.medecin.nom} ${rdv.medecin.prenom} (${rdv.medecin.specialite}) | Date: ${dateFormatee} | Heure: ${heureFormatee}`);
+            console.log(`Patient: ${rdv.patient.nom} ${rdv.patient.prenom} | Médecin: ${rdv.medecin.nom} ${rdv.medecin.prenom} (${rdv.medecin.specialite}) | Date: ${dateFormatee} | Heure: ${rdv.heure}`);
         });
     }
     console.log("\nAppuyez sur Entrée pour continuer...");
@@ -117,8 +116,9 @@ export const saisirPatient = (service: CabinetService, retourMenu: () => void) =
     }
     
     const telephone = readline.question("Téléphone : ");
-    if (!telephone.trim() || !/^\d{2}( \d{3}){2} \d{2}$/.test(telephone)) {
-        console.log("Erreur : Le téléphone doit être au format 'XX XXX XX XX'.");
+    // Accepter les formats 'XX XXX XX XX' et 'XX XXX XX XX'
+    if (!telephone.trim() || !(/^\d{2}( \d{3}){1,2}( \d{2}){1,2}$/.test(telephone))) {
+        console.log("Erreur : Le téléphone doit être au format 'XX XXX XX XX' ou 'XX XXX XX XX'.");
         console.log("\nAppuyez sur Entrée pour continuer...");
         readline.question("");
         retourMenu();
@@ -302,8 +302,6 @@ export const saisirRendezVous = (service: CabinetService, retourMenu: () => void
     }
     
     const [, heures, minutes] = heureStr.match(heureRegex) || [];
-    const heure = new Date(date);
-    heure.setHours(parseInt(heures), parseInt(minutes));
     
     // Vérifier si l'heure est valide (entre 8h et 18h)
     if (parseInt(heures) < 8 || parseInt(heures) >= 18) {
@@ -315,7 +313,7 @@ export const saisirRendezVous = (service: CabinetService, retourMenu: () => void
     }
     
     // Vérifier si le médecin est déjà occupé à cette heure
-    if (service.medecinOccupe(medecins[medecinIndex].id, date, heure)) {
+    if (!service.medecinDisponible(medecins[medecinIndex].id, date, `${heures}:${minutes}`)) {
         console.log("Erreur : Le médecin est déjà occupé à cette heure.");
         console.log("\nAppuyez sur Entrée pour continuer...");
         readline.question("");
@@ -324,7 +322,7 @@ export const saisirRendezVous = (service: CabinetService, retourMenu: () => void
     }
     
     // Vérifier si le patient a déjà un rendez-vous à cette heure
-    if (service.patientOccupe(patients[patientIndex].id, date, heure)) {
+    if (service.rendezVousExiste(patients[patientIndex].id, medecins[medecinIndex].id, date, `${heures}:${minutes}`)) {
         console.log("Erreur : Le patient a déjà un rendez-vous à cette heure.");
         console.log("\nAppuyez sur Entrée pour continuer...");
         readline.question("");
@@ -333,7 +331,7 @@ export const saisirRendezVous = (service: CabinetService, retourMenu: () => void
     }
     
     // Vérifier si le patient a déjà un rendez-vous le même jour
-    if (service.nombreRendezVousPatientJour(patients[patientIndex].id, date) >= 2) {
+    if (service.nombreRendezVousPatientParJour(patients[patientIndex].id, date) >= 2) {
         console.log("Erreur : Le patient a déjà 2 rendez-vous ce jour-là. Maximum 2 rendez-vous par jour.");
         console.log("\nAppuyez sur Entrée pour continuer...");
         readline.question("");
@@ -346,10 +344,10 @@ export const saisirRendezVous = (service: CabinetService, retourMenu: () => void
         patients[patientIndex],
         medecins[medecinIndex],
         date,
-        heure
+        `${heures}:${minutes}`
     );
     
-    console.log(`\nRendez-vous ajouté avec succès pour ${patients[patientIndex].prenom} ${patients[patientIndex].nom} avec Dr. ${medecins[medecinIndex].prenom} ${medecins[medecinIndex].nom} le ${date.toLocaleDateString('fr-FR')} à ${heure.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`);
+    console.log(`\nRendez-vous ajouté avec succès pour ${patients[patientIndex].prenom} ${patients[patientIndex].nom} avec Dr. ${medecins[medecinIndex].prenom} ${medecins[medecinIndex].nom} le ${date.toLocaleDateString('fr-FR')} à ${heureStr}`);
     console.log("\nAppuyez sur Entrée pour continuer...");
     readline.question("");
     
@@ -357,9 +355,17 @@ export const saisirRendezVous = (service: CabinetService, retourMenu: () => void
 };
 
 // Fonction pour quitter l'application
-export const quitter = () => {
+export const quitter = (service: CabinetService) => {
     console.clear();
-    console.log("Merci d'avoir utilisé l'application. À bientôt !");
+    console.log("\n=== Au revoir ===");
+    console.log("Merci d'avoir utilisé notre application de gestion de cabinet médical.");
+    console.log("Sauvegarde des données en cours...");
+    
+    // Sauvegarder les données avant de quitter
+    service.sauvegarderDonnees();
+    
+    console.log("Données sauvegardées avec succès !");
+    console.log("À bientôt !");
     process.exit(0);
 };
 

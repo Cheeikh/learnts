@@ -24,13 +24,13 @@ const afficherDonnees = () => {
             patients[0],
             medecins[0],
             new Date(2025, 2, 15),
-            new Date(2025, 2, 15, 10, 30)
+            "10:30"
         ),
         new RendezVous(
             patients[1],
             medecins[1],
             new Date(2025, 2, 16),
-            new Date(2025, 2, 16, 14, 0)
+            "14:00"
         )
     ];
 
@@ -50,8 +50,7 @@ const afficherDonnees = () => {
     console.log("\n=== Liste des rendez-vous ===");
     rendezVous.forEach(rdv => {
         const dateFormatee = rdv.date.toLocaleDateString('fr-FR');
-        const heureFormatee = rdv.heure.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-        console.log(`Patient: ${rdv.patient.nom} ${rdv.patient.prenom} | Médecin: ${rdv.medecin.nom} ${rdv.medecin.prenom} (${rdv.medecin.specialite}) | Date: ${dateFormatee} | Heure: ${heureFormatee}`);
+        console.log(`Patient: ${rdv.patient.nom} ${rdv.patient.prenom} | Médecin: ${rdv.medecin.nom} ${rdv.medecin.prenom} (${rdv.medecin.specialite}) | Date: ${dateFormatee} | Heure: ${rdv.heure}`);
     });
 };
 

@@ -6,7 +6,7 @@ export class RendezVous {
         private _patient: Patient,
         private _medecin: Medecin,
         private _date: Date,
-        private _heure: Date,
+        private _heure: string,
     ) {}
 
     get patient(): Patient {
@@ -33,11 +33,11 @@ export class RendezVous {
         this._date = value;
     }
 
-    get heure(): Date {
+    get heure(): string {
         return this._heure;
     }
 
-    set heure(value: Date) {
+    set heure(value: string) {
         this._heure = value;
     }
 }
