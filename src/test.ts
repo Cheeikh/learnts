@@ -1,6 +1,6 @@
-import { Patient } from "./model/Patient";
-import { Medecin } from "./model/Medecin";
-import { RendezVous } from "./model/RendezVous";
+import { Patient } from "./model/Patient.js";
+import { Medecin } from "./model/Medecin.js";
+import { RendezVous } from "./model/RendezVous.js";
 
 // Fonction pour afficher les données
 const afficherDonnees = () => {

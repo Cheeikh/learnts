@@ -1,5 +1,5 @@
-import { Patient } from "./Patient";
-import { Medecin } from "./Medecin";
+import { Patient } from "./Patient.js";
+import { Medecin } from "./Medecin.js";
 
 export class RendezVous {
     constructor(

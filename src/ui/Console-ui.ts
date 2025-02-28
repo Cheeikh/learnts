@@ -1,11 +1,11 @@
 import * as readline from "readline-sync";
-import { Patient } from "../model/Patient";
-import { Medecin } from "../model/Medecin";
-import { RendezVous } from "../model/RendezVous";
-import { CabinetService } from "../services/CabinetService";
+import { Patient } from "../model/Patient.js";
+import { Medecin } from "../model/Medecin.js";
+import { RendezVous } from "../model/RendezVous.js";
+import { CabinetService } from "../services/CabinetService.js";
 
 // Fonction pour afficher le menu principal
-export const afficherMenu = (service: CabinetService) => {
+export const afficherMenu = () => {
     console.clear(); // Nettoie la console pour une meilleure lisibilité
     console.log("=== MENU PRINCIPAL ===");
     console.log("1. Ajouter un patient");

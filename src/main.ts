@@ -1,5 +1,5 @@
-import { CabinetService } from "./services/CabinetService";
-import * as ConsoleUI from "./ui/Console-ui";
+import { CabinetService } from "./services/CabinetService.js";
+import * as ConsoleUI from "./ui/Console-ui.js";
 import * as readline from "readline-sync";
 
 // Classe principale de l'application
@@ -18,7 +18,7 @@ class Application {
     
     // Fonction principale pour afficher le menu et traiter les choix
     private afficherMenu(): void {
-        const choix = ConsoleUI.afficherMenu(this.service);
+        const choix = ConsoleUI.afficherMenu();
         this.traiterChoix(choix);
     }
     
