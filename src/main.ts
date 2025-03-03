@@ -30,7 +30,8 @@ class Application {
     
     // Fonction principale pour afficher le menu et traiter les choix
     private afficherMenu(): void {
-        const choix = ConsoleUI.afficherMenu(this.service);
+        const choixStr = ConsoleUI.afficherMenu(this.service);
+        const choix = parseInt(choixStr);
         this.traiterChoix(choix);
     }
     

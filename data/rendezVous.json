@@ -1,0 +1,36 @@
+[
+  {
+    "patient": {
+      "_id": 1,
+      "_nom": "derftgh",
+      "_prenom": "derftgh",
+      "_telephone": "78 786 56 67",
+      "_adresse": "almadies"
+    },
+    "medecin": {
+      "_id": 1,
+      "_nom": "thrgfdv",
+      "_prenom": "utyrbvf",
+      "_specialite": "pediaterie"
+    },
+    "date": "2025-04-02T00:00:00.000Z",
+    "heure": "10:40"
+  },
+  {
+    "patient": {
+      "_id": 1,
+      "_nom": "derftgh",
+      "_prenom": "derftgh",
+      "_telephone": "78 786 56 67",
+      "_adresse": "almadies"
+    },
+    "medecin": {
+      "_id": 1,
+      "_nom": "thrgfdv",
+      "_prenom": "utyrbvf",
+      "_specialite": "pediaterie"
+    },
+    "date": "2025-02-28T00:00:00.000Z",
+    "heure": "17:55"
+  }
+]

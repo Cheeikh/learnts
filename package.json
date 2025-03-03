@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "start": "tsc && node dist/main.js",
+    "start": "tsc && node --experimental-modules dist/main.js",
     "test": "tsc && node dist/test.js"
   },
   "devDependencies": {
